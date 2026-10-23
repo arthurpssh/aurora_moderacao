@@ -1,0 +1,21 @@
+{
+  "name": "aurora-chat",
+  "version": "1.0.0",
+  "description": "Chat web da Aurora (assistente de moderação do Reclame AQUI): aciona o fluxo no Astroflow por webhook e lê as respostas na planilha da Aurora",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --use-system-ca src/server.js",
+    "test": "node --test --test-force-exit \"test/*.test.js\""
+  },
+  "keywords": [],
+  "type": "commonjs",
+  "engines": {
+    "node": ">=24"
+  },
+  "dependencies": {
+    "dotenv": "^18.0.6",
+    "express": "^5.3.0",
+    "googleapis": "^181.0.0"
+  }
+}
