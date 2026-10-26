@@ -34,7 +34,7 @@ env:
       name: aurora-chat-astroflow-webhook-url
       key: ASTROFLOW_WEBHOOK_URL
   # Aba onde o Astroflow grava as mensagens da Aurora (colunas: space, mensagem, ts)
-  AURORA_OUTBOX_SHEET: "Saida_Teste"
+  AURORA_OUTBOX_SHEET: "Saída_Prod"
   # Intervalo de leitura da aba (a cota do Sheets é de 60 leituras/min por usuário)
   AURORA_OUTBOX_POLL_MS: "2500"
 

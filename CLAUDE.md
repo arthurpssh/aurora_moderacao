@@ -46,7 +46,7 @@ Os fluxos, a máquina de estados e a planilha ficam em outros diretórios do rep
 - Todas as rotas, exceto `GET /api/health`, exigem usuário autenticado: o ingress (`auth-url` do `values.yml`) injeta o e-mail em `X-Auth-Request-Email`. Sem e-mail, 403.
 - **Persona = quem está logado.** `personaService.personaDoEmail` deriva do e-mail: nome (`arthur.santos@...` vira "Arthur Santos"), `userId` (`users/` + 21 dígitos) e `space` (`spaces/WEB` + 8 hex), todos determinísticos. A chave da conversa no Astroflow é `space|autor_id`, então a mesma pessoa sempre retoma o mesmo caso. Nenhum campo do corpo da requisição escolhe a identidade.
 - **Envio** (`POST /api/messages`, `{ text }`): valida (texto não vazio, até 20 000 caracteres, JSON, 12 por minuto por usuário), monta o evento (`message.name`, `argumentText`, `sender.*`, `space.name`, `thread.name`, as mesmas chaves que o `adaptador_step.js` do fluxo lê) e faz POST em `ASTROFLOW_WEBHOOK_URL`. O gatilho é **assíncrono**: o HTTP só confirma o recebimento. Responde 202.
-- **Respostas**: o Astroflow acrescenta linhas (`space`, `mensagem`, `ts`) na aba `AURORA_OUTBOX_SHEET` (padrão `Saida_Teste`). Um **único leitor** (`Outbox`) lê a aba a cada `AURORA_OUTBOX_POLL_MS` (2,5 s; a cota do Sheets é de 60 leituras/min) e guarda as mensagens em memória por `space` (200 por pessoa, 6 h). O navegador consulta `GET /api/messages?after=<seq>&boot=<id>` a cada 2,5 s e recebe só as mensagens do próprio space.
+- **Respostas**: o Astroflow acrescenta linhas (`space`, `mensagem`, `ts`) na aba `AURORA_OUTBOX_SHEET` (padrão `Saída_Prod`). Um **único leitor** (`Outbox`) lê a aba a cada `AURORA_OUTBOX_POLL_MS` (2,5 s; a cota do Sheets é de 60 leituras/min) e guarda as mensagens em memória por `space` (200 por pessoa, 6 h). O navegador consulta `GET /api/messages?after=<seq>&boot=<id>` a cada 2,5 s e recebe só as mensagens do próprio space.
 - **Posição de leitura**: o `Outbox` guarda o número da última linha lida (âncora) e uma assinatura do conteúdo dela; toda leitura começa nessa linha. Se a limpeza diária do Apps Script (`limparSaidaTeste`) apagar linhas antigas e deslocar tudo, ele ressincroniza pela assinatura, sem perder nem repetir mensagens. Ao iniciar, só mensagens **novas** entram (o que já estava na aba fica de fora). Mensagens gravadas enquanto o servidor está fora do ar (por exemplo, durante um deploy) não são entregues.
 - `boot` muda a cada reinício; um navegador com `boot` antigo recomeça do zero (o buffer novo só tem mensagens posteriores ao reinício, então não repete).
 - **Histórico**: guardado no `localStorage` do navegador, por e-mail (até 300 mensagens). Não há histórico no servidor.
@@ -63,7 +63,7 @@ Injetadas pelo Secrets Manager (ver `values.yml`):
 - `AURORA_SPREADSHEET_ID` — ID da planilha da Aurora (a mesma do Apps Script)
 - `ASTROFLOW_WEBHOOK_URL` — URL do gatilho POST do fluxo "Chat Bot Aurora"
 
-Configuração (não secret, no `env:` do `values.yml`): `AURORA_OUTBOX_SHEET` (padrão `Saida_Teste`), `AURORA_OUTBOX_POLL_MS` (padrão 2500).
+Configuração (não secret, no `env:` do `values.yml`): `AURORA_OUTBOX_SHEET` (padrão `Saída_Prod`), `AURORA_OUTBOX_POLL_MS` (padrão 2500).
 Somente dev local: `DEV_USER_EMAIL` simula o e-mail do usuário logado (NUNCA definir em produção).
 
 ## Interface
@@ -78,7 +78,7 @@ Somente dev local: `DEV_USER_EMAIL` simula o e-mail do usuário logado (NUNCA de
 
 | Aba | Colunas | Quem escreve |
 |-----|---------|--------------|
-| `Saida_Teste` (ou o nome em `AURORA_OUTBOX_SHEET`) | `space`, `mensagem`, `ts` (opcional) | Astroflow (um "Adicionar uma linha" em cada ponto que envia mensagem ao analista) |
+| `Saída_Prod` (ou o nome em `AURORA_OUTBOX_SHEET`) | `space`, `mensagem`, `ts` (opcional) | Astroflow (um "Adicionar uma linha" em cada ponto que envia mensagem ao analista) |
 
 `space` precisa ser exatamente o `space.name` que o evento trouxe (o fluxo devolve o mesmo valor). O Apps Script (`limparSaidaTeste`) mantém a aba pequena.
 

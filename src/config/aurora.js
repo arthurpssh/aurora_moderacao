@@ -4,7 +4,7 @@ const num = (v, padrao) => (Number.isFinite(Number(v)) && Number(v) > 0 ? Number
 module.exports = {
   spreadsheetId: () => process.env.AURORA_SPREADSHEET_ID || '',
   webhookUrl: () => process.env.ASTROFLOW_WEBHOOK_URL || '',
-  outboxSheet: () => process.env.AURORA_OUTBOX_SHEET || 'Saida_Teste',
+  outboxSheet: () => process.env.AURORA_OUTBOX_SHEET || 'Saída_Prod',
   pollMs: () => num(process.env.AURORA_OUTBOX_POLL_MS, 2500),
   devUserEmail: () => process.env.DEV_USER_EMAIL || '',
 
