@@ -59,7 +59,7 @@ Os fluxos, a máquina de estados e a planilha ficam em outros diretórios do rep
 Injetadas pelo Secrets Manager (ver `values.yml`):
 
 - `GOOGLE_CLIENT_EMAIL` — e-mail da service account (precisa de acesso de **Leitor** à planilha da Aurora)
-- `GOOGLE_PRIVATE_KEY` — chave privada da service account
+- `GOOGLE_PRIVATE_KEY` — chave privada da service account (o campo `private_key` do JSON). O app usa o valor **como veio** (convertendo só `\n` em quebra de linha); **só se o Node o recusar** tenta uma versão normalizada (aspas, `\\n` duplo, espaços no lugar das quebras, linhas coladas, espaços sobrando, corpo sem cabeçalho) e só a usa se for uma chave válida. Nesse caso loga um aviso com o **formato** do valor (contagens e sim/não, nunca trechos da chave). Se nem assim for válida, o erro é `GOOGLE_PRIVATE_KEY inválida` e a tela avisa "credencial do servidor inválida" (`src/config/googleClient.js`)
 - `AURORA_SPREADSHEET_ID` — ID da planilha da Aurora (a mesma do Apps Script)
 - `ASTROFLOW_WEBHOOK_URL` — URL do gatilho POST do fluxo "Chat Bot Aurora"
 

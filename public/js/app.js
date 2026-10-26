@@ -183,6 +183,7 @@
 
   var CAUSAS = {
     configuracao: 'configuração do servidor incompleta',
+    chave_invalida: 'credencial do servidor inválida',
     sem_acesso: 'sem acesso à planilha',
     aba_ou_planilha_nao_encontrada: 'planilha ou aba não encontrada',
     indisponivel: 'planilha indisponível',

@@ -34,6 +34,7 @@ function createSheetsReader({ getClient = getSheetsClient } = {}) {
 function classificarErro(error) {
   const msg = String((error && error.message) || '');
   if (/environment variable is required/i.test(msg)) return 'configuracao';
+  if (/GOOGLE_PRIVATE_KEY inválida|DECODER routines/i.test(msg)) return 'chave_invalida';
   if (error && (error.code === 403 || /permission|caller does not have/i.test(msg))) return 'sem_acesso';
   if (error && (error.code === 404 || /Unable to parse range|not found/i.test(msg))) return 'aba_ou_planilha_nao_encontrada';
   return 'indisponivel';
